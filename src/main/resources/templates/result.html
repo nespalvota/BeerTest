@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Beer Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h1>Results</h1>
+<h2>Home</h2>
+<p th:text="'Longitude: ' + ${greeting.longitude}" />
+<p th:text="'Latitude: ' + ${greeting.latitude}" />
+<a href="/greeting">Try different location</a>
+<h2>Visited:</h2>
+<div th:if="${results != null}">
+    <ul>
+        <li th:each="result : *{results}" th:text="${result.getName()}"></li>
+    </ul>
+</div>
+</body>
+</html>
