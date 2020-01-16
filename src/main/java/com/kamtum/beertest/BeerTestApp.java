@@ -1,4 +1,4 @@
-package com.giacom.databasedemo;
+package com.kamtum.beertest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,21 +6,21 @@ import java.io.InputStreamReader;
 
 import javax.annotation.PostConstruct;
 
-import com.giacom.databasedemo.persistence.BeerRepository;
-import com.giacom.databasedemo.persistence.BreweryRepository;
-import com.giacom.databasedemo.persistence.GeocodeRepository;
-import com.giacom.databasedemo.persistence.PersonRepository;
-import com.giacom.databasedemo.service.BeerService;
-import com.giacom.databasedemo.service.BreweryService;
-import com.giacom.databasedemo.service.GeocodeService;
-import com.giacom.databasedemo.service.PersonService;
+import com.kamtum.beertest.persistence.BeerRepository;
+import com.kamtum.beertest.persistence.BreweryRepository;
+import com.kamtum.beertest.persistence.GeocodeRepository;
+import com.kamtum.beertest.persistence.PersonRepository;
+import com.kamtum.beertest.service.BeerService;
+import com.kamtum.beertest.service.BreweryService;
+import com.kamtum.beertest.service.GeocodeService;
+import com.kamtum.beertest.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.giacom.databasedemo.domain.*;
-import com.giacom.databasedemo.persistence.*;
-import com.giacom.databasedemo.service.*;
+import com.kamtum.beertest.domain.*;
+import com.kamtum.beertest.persistence.*;
+import com.kamtum.beertest.service.*;
 
 @SpringBootApplication
 public class DatabaseDemoApplication {
