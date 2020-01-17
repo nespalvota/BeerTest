@@ -1,4 +1,4 @@
-package com.giacom.databasedemo.domain;
+package com.kamtum.beertest.domain;
 
 import java.time.LocalDate;
 

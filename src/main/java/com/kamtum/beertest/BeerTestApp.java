@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 import javax.annotation.PostConstruct;
 
+import com.kamtum.beertest.domain.Geocode;
 import com.kamtum.beertest.persistence.BeerRepository;
 import com.kamtum.beertest.persistence.BreweryRepository;
 import com.kamtum.beertest.persistence.GeocodeRepository;
@@ -18,12 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.kamtum.beertest.domain.*;
-import com.kamtum.beertest.persistence.*;
-import com.kamtum.beertest.service.*;
-
 @SpringBootApplication
-public class DatabaseDemoApplication {
+public class BeerTestApp {
 
     @Autowired
     private PersonService service;
@@ -44,7 +41,7 @@ public class DatabaseDemoApplication {
     private GeocodeRepository geocodeRepository;
 
     public static void main(String[] args) {
-        SpringApplication.run(DatabaseDemoApplication.class, args);
+        SpringApplication.run(BeerTestApp.class, args);
     }
 
     @PostConstruct
@@ -102,5 +99,7 @@ public class DatabaseDemoApplication {
         Double distance = R * c;
         return distance;
     }
+
+
 
 }

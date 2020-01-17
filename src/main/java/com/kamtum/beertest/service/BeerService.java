@@ -1,4 +1,4 @@
-package com.giacom.databasedemo.service;
+package com.kamtum.beertest.service;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.giacom.databasedemo.domain.Beer;
+import com.kamtum.beertest.domain.Beer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.giacom.databasedemo.persistence.BeerRepository;
+import com.kamtum.beertest.persistence.BeerRepository;
 
 @Service
 public class BeerService {
@@ -28,9 +28,19 @@ public class BeerService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
-    public Beer findById(Long id) {
+    public Beer findById(int id) {
         return beerPersistence.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Beer not found with id:" + id));
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public List<Beer> findByBreweryId(int id) {
+        List<Beer> beers = new ArrayList<>();
+        for (Beer b : beerPersistence.findAll()) {
+            if(b.getBrewery_id() == id)
+                beers.add(b);
+        }
+        return beers;
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)

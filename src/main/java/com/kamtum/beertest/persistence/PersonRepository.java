@@ -1,6 +1,6 @@
-package com.giacom.databasedemo.persistence;
+package com.kamtum.beertest.persistence;
 
-import com.giacom.databasedemo.domain.Person;
+import com.kamtum.beertest.domain.Person;
 import org.springframework.data.repository.CrudRepository;
 
 public interface PersonRepository extends CrudRepository<Person, Long> {

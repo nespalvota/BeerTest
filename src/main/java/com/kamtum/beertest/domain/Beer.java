@@ -1,4 +1,4 @@
-package com.giacom.databasedemo.domain;
+package com.kamtum.beertest.domain;
         import javax.persistence.Entity;
         import javax.persistence.GeneratedValue;
         import javax.persistence.GenerationType;
@@ -11,7 +11,7 @@ public class Beer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull
-    private Long id;
+    private int id;
     @NotNull
     private int brewery_id;
     @NotNull
@@ -25,10 +25,10 @@ public class Beer {
         this.brewery_id = brewery_id;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

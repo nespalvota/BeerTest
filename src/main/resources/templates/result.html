@@ -6,14 +6,20 @@
 </head>
 <body>
 <h1>Results</h1>
-<h2>Home</h2>
+<h2>Home location:</h2>
 <p th:text="'Longitude: ' + ${greeting.longitude}" />
 <p th:text="'Latitude: ' + ${greeting.latitude}" />
 <a href="/greeting">Try different location</a>
-<h2>Visited:</h2>
+<h2 th:text="'Visited breweries: ' + ${results.size()-2}" />
 <div th:if="${results != null}">
     <ul>
-        <li th:each="result : *{results}" th:text="${result.getName()}"></li>
+        <li th:each="result : *{results}" th:text="${result.toString()}"></li>
+    </ul>
+</div>
+<h2 th:text="'Beers collected: ' + ${beers.size()}" />
+<div th:if="${beers != null}">
+    <ul>
+        <li th:each="beer : *{beers}" th:text="${beer.getName()}"></li>
     </ul>
 </div>
 </body>

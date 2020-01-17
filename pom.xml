@@ -12,7 +12,7 @@
 	<artifactId>beertest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>beertest</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Beer Test project</description>
 
 	<properties>
 		<java.version>1.8</java.version>

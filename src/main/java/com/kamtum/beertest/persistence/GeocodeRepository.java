@@ -1,8 +1,8 @@
-package com.giacom.databasedemo.persistence;
+package com.kamtum.beertest.persistence;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.giacom.databasedemo.domain.Geocode;
+import com.kamtum.beertest.domain.Geocode;
 
 public interface GeocodeRepository extends CrudRepository<Geocode, Integer> {
 

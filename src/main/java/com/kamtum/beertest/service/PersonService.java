@@ -1,4 +1,4 @@
-package com.giacom.databasedemo.service;
+package com.kamtum.beertest.service;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.giacom.databasedemo.domain.Person;
+import com.kamtum.beertest.domain.Person;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.giacom.databasedemo.persistence.PersonRepository;
+import com.kamtum.beertest.persistence.PersonRepository;
 
 @Service
 public class PersonService {

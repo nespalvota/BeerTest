@@ -1,9 +1,8 @@
-package com.giacom.databasedemo.controllers;
-import com.giacom.databasedemo.domain.Brewery;
-import com.giacom.databasedemo.service.BreweryService;
-import com.giacom.databasedemo.service.GeocodeService;
-import com.giacom.databasedemo.domain.Geocode;
-import com.giacom.databasedemo.domain.Greeting;
+package com.kamtum.beertest.controllers;
+import com.kamtum.beertest.domain.*;
+import com.kamtum.beertest.service.BeerService;
+import com.kamtum.beertest.service.BreweryService;
+import com.kamtum.beertest.service.GeocodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 @Controller
@@ -20,7 +21,8 @@ class GreetingController {
     private GeocodeService geocodeService;
     @Autowired
     private BreweryService breweryService;
-    private ArrayList<Brewery> results = new ArrayList<Brewery>() ;
+    @Autowired
+    private BeerService beerService;
 
     @GetMapping("/greeting")
     public String greetingForm(Model model) {
@@ -29,53 +31,33 @@ class GreetingController {
     }
 
     @PostMapping("/greeting")
-    public String greetingSubmit(Model model, @ModelAttribute Greeting greeting, @ModelAttribute Brewery brewery) {
+    public String greetingSubmit(Model model, @ModelAttribute Greeting greeting) {
         if(true) {
-       // if (checkInput(greeting)) {
             double lat = 51.742503;
             double lon = 19.432956;
-           // double lon = Float.parseFloat(greeting.getLongitude());
-           // double lat = Float.parseFloat(greeting.getLatitude());
-            int max = 1000;
-            Geocode[] selected = new Geocode[max];
-            Double[] distances = new Double[max];
-            int selectedCount = 0;
-
-            double closestDist = 2000;
-            int closest = 0;
+            Geocode home = new Geocode(0, lat, lon);
 
             List<Geocode> allGeocodes = geocodeService.findAll();
+            Geocode[] filtered = new Geocode[allGeocodes.size()];
+            filtered[0] = home;
+            int filteredCount = 1;
             for (Geocode code : allGeocodes) {
-                //Degrees of latitude are parallel so the distance between each degree
-                // remains almost constant but since degrees of longitude are farthest apart
-                // at the equator and converge at the poles, their distance varies greatly.
-                // Therefore, can base geocodes selection only on latitude.
-                // Each degree of latitude is approximately 69 miles (111 kilometers)
-                // Thus, a brewery is reachable if it's closer than 1000 km (9 degrees of lat)
-                double degreeDif = lat - code.getLatitude();
-                if (degreeDif < 9 && degreeDif > -9 & selectedCount < max)
+                if (calculateDistance(code, home) <= 1000)
                 {
-                    selected[selectedCount] = code;
-                    distances[selectedCount] = calculateDistance(lat, lon, code.getLatitude(), code.getLongitude());
-                    if (distances[selectedCount] < closestDist)
-                    {
-                        closestDist = distances[selectedCount];
-                        closest = selectedCount;
-                    }
-                    selectedCount++;
+                    filtered[filteredCount] = code;
+                    filteredCount++;
                 }
             }
-            System.out.println("Closest: " + selected[closest].getBrewery_id() + " KM: " + distances[closest]);
-            /*
-            for (Geocode code : allGeocodes) {
+            ArrayList<Result> result3 = makeRoute(breweryService, filtered, filteredCount, home);
+        //    ArrayList<Result> result3 = makeRouteByMostBeers(beerService, breweryService, filtered, filteredCount, home);
 
-            }*/
-            results.add(breweryService.findById(1));
-            results.add(breweryService.findById(2));
-            results.add(breweryService.findById(3));
-            results.add(breweryService.findById(4));
-            
-            model.addAttribute("results", results);
+            ArrayList<Beer> beers = new ArrayList<>();
+            for (Result res : result3) {
+                int dist = (int) res.getDistance();
+                beers.addAll(makeBeerList(beerService, res));
+            }
+            model.addAttribute("results", result3);
+            model.addAttribute("beers", beers);
             return "result";
         }
         else
@@ -95,14 +77,11 @@ class GreetingController {
         }
         return correct;
     }
-
     // Convert value to Radians
     private static Double toRad(Double value) {
         return value * Math.PI / 180;
     }
-
-    // Distance calculation between two points
-    // (based on Haversine Formula)
+    // Calculate distance (km) between two points (based on Haversine Formula)
     private static Double calculateDistance (double lat1, double lon1, double lat2, double lon2) {
         final int R = 6371; // Radius of the earth
         Double latDistance = toRad(lat2-lat1);
@@ -114,5 +93,228 @@ class GreetingController {
         Double distance = R * c;
         return distance;
     }
+    private static Double calculateDistance (Geocode a, Geocode b) {
+        return calculateDistance(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude());
+    }
 
+    private static Double[][] createDistanceMatrix (Geocode[] geocodes, int geocodesCount) {
+        Double[][] matrix = new Double[geocodes.length][geocodes.length];
+        for (int i = 0; i < geocodesCount; i++ )
+        {
+            for (int j = i + 1; j < geocodesCount; j++ )
+            {
+                matrix[i][j] = calculateDistance(geocodes[i], geocodes[j]);
+               // System.out.print(matrix[i][j].intValue() + "  ");
+            }
+           // System.out.println();
+        }
+        return matrix;
+    }
+
+  /*  private static Double[][] createDistanceMatrix (Dictionary<Geocode, Double> codes) {
+        Double[][] matrix = new Double[codes.size()][codes.size()];
+        for (int i = 0; i < codes.size(); i++ )
+        {
+            for (int j = i + 1; j < codes.size(); j++ )
+            {
+                matrix[i][j] = calculateDistance(codes[i], codes[j]);
+                // System.out.print(matrix[i][j].intValue() + "  ");
+            }
+            // System.out.println();
+        }
+        return matrix;
+    }*/
+
+    // Find closest city (brewery) in the distance matrix
+    private static int findClosest (Double[][] distances, int distancesCount, int base, ArrayList<Integer> ignore) {
+        double closestDist = 100000;
+        int closest = 0;
+        for (int j = base+1; j < distancesCount; j++ )
+        {
+            if(distances[base][j] < closestDist)
+            {
+                boolean notVisited = true;
+                for (int a : ignore) {
+                    if (a == j)
+                        notVisited = false;
+                }
+                if (notVisited) {
+                    closestDist = distances[base][j];
+                    closest = j;
+                }
+            }
+        }
+        for (int i = 0; i < base; i++ )
+        {
+            boolean notVisited = true;
+            for (int a : ignore) {
+                if (a == i)
+                    notVisited = false;
+            }
+            if (notVisited) {
+                if (distances[i][base] < closestDist) {
+                    closestDist = distances[i][base];
+                    closest = i;
+                }
+            }
+        }
+        return closest;
+    }
+
+    // Find brewery with most beers in the distance matrix
+    // (the closest one if there are a few)
+    private static int findMostBeers (Geocode[] geocodes, int geocodesCount, BeerService beerService, int currentCity, ArrayList<Integer> ignore) {
+        int mostBeersCount = 0;
+        int mostBeers = 1;
+        double minDist = 100000;
+        for (int i = 0; i < geocodesCount; i++) {
+            boolean notVisited = true;
+            for (int a : ignore) {
+                if (a == i)
+                    notVisited = false;
+            }
+            if (notVisited) {
+                int beerCount = beerService.findByBreweryId(geocodes[i].getBrewery_id()).size();
+                double dist = calculateDistance(geocodes[currentCity], geocodes[i]);
+                if (beerCount == mostBeersCount) {
+                    if (dist < minDist) {
+                        minDist = dist;
+                        mostBeersCount = beerCount;
+                        mostBeers = i;
+                    }
+                } else if (beerCount > mostBeersCount) {
+                    minDist = dist;
+                    mostBeersCount = beerCount;
+                    mostBeers = i;
+                }
+            }
+        }
+        System.out.println("Most beers: " + mostBeersCount + " at " + geocodes[mostBeers].getBrewery_id());
+        return mostBeers;
+    }
+
+    private static ArrayList<Result> makeRouteByMostBeers (BeerService beerService, BreweryService breweryService, Geocode[] geocodes, int geocodesCount, Geocode home) {
+        ArrayList<Result> route = new ArrayList();
+        route.add(new Result(0, "HOME", home.getLatitude(), home.getLongitude(), 0));
+
+        Double[][] distanceMatrix = createDistanceMatrix(geocodes, geocodesCount);
+
+        int currentCity = 0;
+        double fuelLeft = 2000;
+        double fuelSpent = 0;
+        boolean canReachHome = true;
+        double distToHomePrevious = 0;
+
+        ArrayList<Integer> ignore = new ArrayList<>();
+        ignore.add(currentCity);
+
+        while (fuelLeft > 0 && canReachHome) {
+            int mostBeers = findMostBeers(geocodes, geocodesCount, beerService, currentCity, ignore);
+            double distToHome = calculateDistance(geocodes[mostBeers], home);
+            double dist = 0;
+            if (mostBeers > currentCity)
+                dist = distanceMatrix[currentCity][mostBeers];
+            else
+                dist = distanceMatrix[mostBeers][currentCity];
+            // if too far from home, don't visit and go home
+            if ( (distToHome + dist) < fuelLeft) {
+                fuelLeft = fuelLeft - dist;
+                currentCity = mostBeers;
+                Result res = new Result(geocodes[currentCity].getBrewery_id(), breweryService.findById(geocodes[currentCity].getBrewery_id()).getName(),
+                        geocodes[currentCity].getLatitude(), geocodes[currentCity].getLongitude(), dist);
+                route.add(res);
+                ignore.add(currentCity);
+                fuelSpent += dist;
+                distToHomePrevious = distToHome;
+            }
+            else {
+                route.add(new Result(0, "HOME", home.getLatitude(), home.getLongitude(), distToHomePrevious));
+                fuelLeft = fuelLeft - distToHomePrevious;
+                fuelSpent += distToHomePrevious;
+                canReachHome = false;
+            }
+        }
+        System.out.println("FUEL SPENT: " + (int) fuelSpent);
+        System.out.println("FUEL LEFT: " + fuelLeft);
+        return route;
+    }
+
+    private static ArrayList<Result> makeRoute (BreweryService breweryService, Geocode[] geocodes, int geocodesCount, Geocode home) {
+        ArrayList<Result> route = new ArrayList();
+        route.add(new Result(0, "HOME", home.getLatitude(), home.getLongitude(), 0));
+
+        Double[][] distanceMatrix = createDistanceMatrix(geocodes, geocodesCount);
+
+        int currentCity = 0;
+        double fuelLeft = 2000;
+        double fuelSpent = 0;
+        boolean canReachHome = true;
+        double distToHomePrevious = 0;
+
+        ArrayList<Integer> ignore = new ArrayList<>();
+        ignore.add(currentCity);
+
+        while (fuelLeft > 0 && canReachHome) {
+            int closeBy = findClosest(distanceMatrix, geocodesCount, currentCity, ignore);
+            double distToHome = calculateDistance(geocodes[closeBy], home);
+
+            // if too far from home, don't visit and go home
+            if (distToHome < fuelLeft) {
+                double dist = 0;
+                if (closeBy > currentCity)
+                    dist = distanceMatrix[currentCity][closeBy];
+                else
+                    dist = distanceMatrix[closeBy][currentCity];
+                fuelLeft = fuelLeft - dist;
+                currentCity = closeBy;
+                Result res = new Result(geocodes[currentCity].getBrewery_id(), breweryService.findById(geocodes[currentCity].getBrewery_id()).getName(),
+                        geocodes[currentCity].getLatitude(), geocodes[currentCity].getLongitude(), dist);
+                route.add(res);
+                ignore.add(currentCity);
+                fuelSpent += dist;
+                distToHomePrevious = distToHome;
+            }
+            else {
+                route.add(new Result(0, "HOME", home.getLatitude(), home.getLongitude(), distToHomePrevious));
+                fuelLeft = fuelLeft - distToHomePrevious;
+                fuelSpent += distToHomePrevious;
+                canReachHome = false;
+            }
+        }
+        System.out.println("FUEL SPENT: " + (int) fuelSpent);
+        System.out.println("FUEL LEFT: " + (int) fuelLeft);
+        return route;
+    }
+
+    private static ArrayList<Beer> makeBeerList (BeerService beerService, Result res) {
+        ArrayList<Beer> beers = new ArrayList<>();
+        if(res.getId() != 0)    // skip 0 as it is home address
+            beers.addAll(beerService.findByBreweryId(res.getId()));
+        return beers;
+    }
+    // filter geocodes that are closer than 1000km to home
+    private static Geocode[] filterGeocodes (List<Geocode> allGeocodes, Geocode home) {
+        Geocode[] filtered = new Geocode[allGeocodes.size()];
+        int filteredCount = 0;
+        for (Geocode code : allGeocodes) {
+            if (calculateDistance(code, home) <= 1000)
+            {
+                filtered[filteredCount] = code;
+            }
+        }
+        return filtered;
+    }
+  /*  // filter geocodes that are closer than 1000km to home
+    // and save in dictionary together with distance to home
+    private static  Dictionary<Geocode, Double> filterGeocodes (List<Geocode> allGeocodes, Geocode home) {
+        Dictionary<Geocode, Double> filtered = new Hashtable<>();
+        for (Geocode code : allGeocodes) {
+            double distToHome = calculateDistance(code, home);
+            if (distToHome <= 1000)
+            {
+                filtered.put(code, distToHome);
+            }
+        }
+        return filtered;
+    }*/
 }

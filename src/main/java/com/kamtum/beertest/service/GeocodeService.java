@@ -1,4 +1,4 @@
-package com.giacom.databasedemo.service;
+package com.kamtum.beertest.service;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.giacom.databasedemo.domain.Geocode;
-import com.giacom.databasedemo.persistence.GeocodeRepository;
+import com.kamtum.beertest.domain.Geocode;
+import com.kamtum.beertest.persistence.GeocodeRepository;
 
 @Service
 public class GeocodeService {
