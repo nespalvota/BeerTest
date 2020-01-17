@@ -22,5 +22,6 @@
         <li th:each="beer : *{beers}" th:text="${beer.getName()}"></li>
     </ul>
 </div>
+<h2 th:text="'Distance travelled: ' + ${distance} + ' km'" />
 </body>
 </html>
