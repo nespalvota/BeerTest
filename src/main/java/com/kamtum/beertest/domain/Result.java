@@ -60,9 +60,7 @@ public class Result {
         this.longitude = longitude;
     }
 
-    public double getDistance() {
-        return distance;
-    }
+    public int getDistance() { return (int) distance; }
     public void setDistance(double distance) {
         this.distance = distance;
     }

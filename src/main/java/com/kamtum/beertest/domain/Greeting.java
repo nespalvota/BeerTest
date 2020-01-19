@@ -2,26 +2,8 @@ package com.kamtum.beertest.domain;
 
 public class Greeting {
 
-    private int id;
     private String latitude;
     private String longitude;
-    private String content;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 
     public String getLatitude() {
         return latitude;
@@ -36,5 +18,4 @@ public class Greeting {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
-
 }

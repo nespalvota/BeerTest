@@ -1,16 +1,12 @@
 package com.kamtum.beertest.service;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.persistence.EntityNotFoundException;
-
-import com.kamtum.beertest.domain.Brewery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.kamtum.beertest.domain.Brewery;
 import com.kamtum.beertest.persistence.BreweryRepository;
 
 @Service

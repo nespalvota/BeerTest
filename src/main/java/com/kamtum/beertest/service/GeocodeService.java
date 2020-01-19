@@ -1,15 +1,11 @@
 package com.kamtum.beertest.service;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.persistence.EntityNotFoundException;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.kamtum.beertest.domain.Geocode;
 import com.kamtum.beertest.persistence.GeocodeRepository;
 

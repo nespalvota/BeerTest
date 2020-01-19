@@ -1,0 +1,54 @@
+html {
+    height: 100%;
+    display: table;
+    margin: auto;
+}
+body {
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    background: whitesmoke;
+    letter-spacing: 0.1em;
+    color: #000000a1;
+    padding: 5em;
+}
+
+h1 {
+    text-align: center;
+    margin: 0.5em !important;
+    letter-spacing: 0.2em;
+}
+
+h2 {
+    margin-bottom: 0.5em;
+}
+
+ul {
+    list-style-type: square;
+}
+
+ul li {
+    margin-bottom: 0.2em;
+}
+form {
+    text-align: center;
+}
+input {
+    font-family: "Times New Roman";
+    background: none;
+    color: #000000a1;
+}
+table {
+    border-collapse: collapse;
+}
+table td,th {
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    padding-right: 18px;
+    padding-left: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+table tbody tr:hover {
+    background-color: #1535d81f;
+}

@@ -3,11 +3,13 @@
 <head>
     <title>Beer Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" />
 </head>
 <body>
-<h1>Bad Input</h1>
-<p th:text="'Longitude: ' + ${greeting.longitude}" />
+<h1>ERROR</h1>
+<h2>Bad input form or there are no breweries nearby.</h2>
 <p th:text="'Latitude: ' + ${greeting.latitude}" />
+<p th:text="'Longitude: ' + ${greeting.longitude}" />
 <a href="/greeting">Submit another input</a>
 </body>
 </html>

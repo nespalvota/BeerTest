@@ -3,18 +3,34 @@
 <head>
     <title>Beer Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" />
 </head>
 <body>
-<h1>Results</h1>
+<h1>RESULTS</h1>
 <h2>Home location:</h2>
-<p th:text="'Longitude: ' + ${greeting.longitude}" />
 <p th:text="'Latitude: ' + ${greeting.latitude}" />
+<p th:text="'Longitude: ' + ${greeting.longitude}" />
 <a href="/greeting">Try different location</a>
-<h2 th:text="'Visited breweries: ' + ${results.size()-2}" />
+<h2 th:text="'Visited breweries: ' + ${results.size()-2} + '. Route:'" />
 <div th:if="${results != null}">
-    <ul>
-        <li th:each="result : *{results}" th:text="${result.toString()}"></li>
-    </ul>
+    <table>
+        <thead>
+        <tr>
+            <th> Id </th>
+            <th> Title </th>
+            <th> Location </th>
+            <th> Distance </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="result : ${results}">
+            <td><span th:text="${result.id}"> Id </span></td>
+            <td><span th:text="${result.name}"> Title </span></td>
+            <td><span th:text="${result.latitude} +'; '+ ${result.longitude}"> Location </span></td>
+            <td><span th:text="${result.getDistance()}"> Distance (km) </span></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 <h2 th:text="'Beers collected: ' + ${beers.size()}" />
 <div th:if="${beers != null}">
@@ -22,6 +38,7 @@
         <li th:each="beer : *{beers}" th:text="${beer.getName()}"></li>
     </ul>
 </div>
-<h2 th:text="'Distance travelled: ' + ${distance} + ' km'" />
+<h2 th:text="'Distance travelled: ' + ${distance} + ' km.'" />
+<h2 th:text="'Program took ' + ${time} + ' ms.'" />
 </body>
 </html>
