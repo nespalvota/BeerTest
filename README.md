@@ -24,7 +24,8 @@ CREATE DATABASE hello_java CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 4) Open Database window -> add Data Source -> MySql -> user: demo_java pass: 1234 database: hello_java
 
-5) Upload data to the tables: drag the files from src/main/resources/data + check "First row is header" + for geocodes.csv file check that brewery_id is Unique
+5) Upload data: select the database -> Run SQL script -> select sql files from src/main/resources/data
+(or upload csv data files + check "First row is header" + for geocodes.csv file check that brewery_id is Unique)
 
 6) Open http://localhost:8080/greeting and insert home location.
 
